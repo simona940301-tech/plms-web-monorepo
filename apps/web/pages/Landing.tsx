@@ -93,21 +93,21 @@ const Landing: React.FC = () => {
           {/* Anxiety line (baseline at 65 with X axis years) */}
           <div className="rounded-lg border p-4 text-left">
             <h3 className="font-semibold mb-2">學生焦慮指數（逐年）</h3>
-            <ResponsiveContainer width="100%" height={180}>
-              <LineChart data={[
-                { year: '2020', value: 68 },
-                { year: '2021', value: 72 },
-                { year: '2022', value: 76 },
-                { year: '2023', value: 79 },
-                { year: '2024', value: 82 },
-              ]} margin={{ left: 8, right: 8, top: 10, bottom: 8 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <ResponsiveContainer width="100%" height={180}>
+                <LineChart data={[
+                  { year: '2020', value: 68 },
+                  { year: '2021', value: 72 },
+                  { year: '2022', value: 76 },
+                  { year: '2023', value: 79 },
+                  { year: '2024', value: 82 },
+                ]} margin={{ left: 8, right: 8, top: 10, bottom: 8 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis dataKey="year" stroke="#6b7280" />
                 <YAxis domain={[65, 85]} tick={{ fill: '#6b7280' }} stroke="#6b7280" />
-                <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={3} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-              </LineChart>
-            </ResponsiveContainer>
+                  <Tooltip />
+                <Line type="monotone" dataKey="value" stroke="#3776A1" strokeWidth={3} dot={{ r: 3, stroke: '#3776A1' }} activeDot={{ r: 5 }} />
+                </LineChart>
+              </ResponsiveContainer>
           </div>
 
           {/* Error rates Radar */}
@@ -124,7 +124,7 @@ const Landing: React.FC = () => {
                 <PolarGrid />
                 <PolarAngleAxis dataKey="subject" tick={{ fill: '#6b7280', fontSize: 12 }} />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: '#9ca3af', fontSize: 10 }} />
-                <Radar name="錯誤率" dataKey="v" stroke="#f43f5e" fill="#f43f5e" fillOpacity={0.25} />
+                <Radar name="錯誤率" dataKey="v" stroke="#3776A1" fill="#89CFF1" fillOpacity={0.35} />
               </RadarChart>
             </ResponsiveContainer>
           </div>
