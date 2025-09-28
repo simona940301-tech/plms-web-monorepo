@@ -5,7 +5,8 @@ This repo combines frontend and backend code so changes can land in a single com
 Currently it contains the web app imported via Git subtree.
 
 - Apps
-  - `apps/web` — Vite-based web frontend (imported from `plms-platform-backend` for now)
+  - `apps/web` — Vite-based web frontend
+  - `apps/api` — Minimal Express API with optional Firebase Admin
 
 Remotes configured for subtree operations:
 - `web` → https://github.com/simona940301-tech/plms-web.git (frontend repo)
@@ -17,6 +18,10 @@ Quick Start
   - `make web-dev` — run Vite dev server in `apps/web`
   - `make web-build` — build web
   - `make web-preview` — preview build
+
+- API dev
+  - `make api-dev` — install deps and run Express API in `apps/api`
+  - `make api-start` — production mode
 
 Subtree sync (history preserved)
 
@@ -32,6 +37,13 @@ The web app was imported from `web-platform` into `apps/web`.
   - `./scripts/subtree-push-web.sh`
 
 Note: The `web` remote points to the desired frontend repo (`plms-web`). Recommended: keep `apps/web` as the source of truth and push to `web` so future work stays simple.
+
+API notes
+- Firebase Admin is optional; configure via `GOOGLE_APPLICATION_CREDENTIALS` (file path) or `FIREBASE_SERVICE_ACCOUNT_JSON` (inline JSON).
+- Endpoints:
+  - `GET /health` — healthcheck
+  - `GET /api/v1/version` — version info
+  - `GET /api/v1/me` — requires Firebase ID token (Authorization: Bearer <token>)
 
 Conventions
 
