@@ -21,6 +21,7 @@
 
 # Env
 **/.env*
+!**/.env.example
 
 # Others
 **/.cache/
