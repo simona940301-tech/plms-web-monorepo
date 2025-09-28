@@ -16,12 +16,12 @@ const Header: React.FC = () => {
         <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm">
             <div className="container mx-auto flex h-16 items-center space-x-4 px-4 sm:justify-between sm:space-x-0">
                 <Link to="/" className="flex items-center space-x-2">
-                    {/* Brand logo (place your file at public/logo.png). Fallback to text if not found. */}
+                    {/* Brand logo: prefers PNG; falls back to SVG placeholder */}
                     <img
                       src="/logo.png"
                       alt="學人經 XueRenJing logo"
                       className="h-7 w-7 object-contain hidden sm:block"
-                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/logo.svg'; (e.currentTarget as HTMLImageElement).style.display = 'block'; }}
                     />
                     <span className="font-bold">學人經 XueRenJing</span>
                 </Link>

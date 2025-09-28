@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Simple placeholder matching your logo idea: cap + bulb -->
+  <defs>
+    <style>
+      .cap{fill:#1B5886}
+      .bulb{fill:#F2D075}
+      .stroke{stroke:#1B5886;stroke-width:8;fill:none;stroke-linecap:round}
+    </style>
+  </defs>
+  <!-- mortarboard cap -->
+  <polygon class="cap" points="128 20 12 64 128 108 244 64 128 20"/>
+  <rect class="cap" x="68" y="100" width="120" height="18" rx="2"/>
+  <rect class="cap" x="50" y="64" width="8" height="44" rx="3"/>
+  <circle class="cap" cx="54" cy="114" r="6"/>
+  <!-- bulb body -->
+  <path class="bulb" d="M128 120c-36 0-68 28-68 64 0 20 9 34 24 46 6 5 10 11 11 19h66c1-8 5-14 11-19 15-12 24-26 24-46 0-36-32-64-68-64z"/>
+  <!-- filament stylized 'x' -->
+  <path class="stroke" d="M92 192c12-16 28-16 40 0m0-32c-12 16-28 16-40 0"/>
+  <!-- bulb base -->
+  <rect class="cap" x="98" y="216" width="60" height="12" rx="3"/>
+  <rect class="cap" x="98" y="232" width="60" height="12" rx="3"/>
+</svg>
+
