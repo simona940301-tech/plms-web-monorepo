@@ -4,6 +4,12 @@ import { Button } from '../components/ui/Button';
 import { logEvent } from '../lib/events';
 import useUiStore from '../state/useUiStore';
 import { signIn } from '../lib/auth';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
+  PieChart, Pie, Cell,
+  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
+  ResponsiveContainer,
+} from 'recharts';
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
@@ -59,74 +65,68 @@ const Landing: React.FC = () => {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold">為什麼需要 Ready Score？</h2>
         <div className="grid md:grid-cols-3 gap-4">
-          {/* Pie via conic-gradient */}
+          {/* Satisfaction Pie */}
           <div className="rounded-lg border p-4 text-left">
             <h3 className="font-semibold mb-2">大學生科系滿意度</h3>
             <div className="flex items-center gap-4">
-              {(() => {
-                const regret = 55; const ok = 32; const satisfied = 13;
-                const a = regret * 3.6; const b = (regret + ok) * 3.6;
-                const style = {
-                  backgroundImage: `conic-gradient(#ef4444 0 ${a}deg, #f59e0b ${a}deg ${b}deg, #10b981 ${b}deg 360deg)`,
-                } as React.CSSProperties;
-                return (
-                  <div className="w-28 h-28 rounded-full" style={style} />
-                );
-              })()}
+              <ResponsiveContainer width={120} height={120}>
+                <PieChart>
+                  <Pie dataKey="value" data={[
+                    { name: '後悔', value: 55, color: '#f43f5e' },
+                    { name: '還可以', value: 32, color: '#f59e0b' },
+                    { name: '滿意', value: 13, color: '#10b981' },
+                  ]} innerRadius={28} outerRadius={56} paddingAngle={2}>
+                    <Cell key="c1" fill="#f43f5e" />
+                    <Cell key="c2" fill="#f59e0b" />
+                    <Cell key="c3" fill="#10b981" />
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
               <ul className="text-sm">
-                <li className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-full bg-red-500" /> 後悔 55%</li>
+                <li className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-full bg-rose-500" /> 後悔 55%</li>
                 <li className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-full bg-amber-500" /> 還可以 32%</li>
                 <li className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-full bg-emerald-500" /> 滿意 13%</li>
               </ul>
             </div>
           </div>
 
-          {/* Anxiety line (simple SVG) */}
+          {/* Anxiety line (baseline at 65 with X axis years) */}
           <div className="rounded-lg border p-4 text-left">
             <h3 className="font-semibold mb-2">學生焦慮指數（逐年）</h3>
-            {(() => {
-              const points = [68,72,76,79,82];
-              const years = [2020,2021,2022,2023,2024];
-              const w = 220, h = 110, pad = 10;
-              const max = 100, min = 0;
-              const stepX = (w - pad*2) / (points.length - 1);
-              const toY = (v:number) => h - pad - ((v-min)/(max-min))*(h - pad*2);
-              let d = '';
-              points.forEach((v,i)=>{ const x = pad + i*stepX; const y = toY(v); d += (i? ' L':'M')+x+','+y; });
-              const circles = points.map((v,i)=>{
-                const x = pad + i*stepX; const y = toY(v); return <circle key={i} cx={x} cy={y} r={3} className="fill-primary"/>;
-              });
-              return (
-                <div className="flex items-end gap-3">
-                  <svg width={w} height={h} className="border rounded bg-white">
-                    <path d={d} className="stroke-primary" fill="none" strokeWidth={2} />
-                    {circles}
-                  </svg>
-                  <ul className="text-xs text-muted-foreground">
-                    {years.map((y,i)=> <li key={y}>{y}: {points[i]}</li>)}
-                  </ul>
-                </div>
-              );
-            })()}
+            <ResponsiveContainer width="100%" height={180}>
+              <LineChart data={[
+                { year: '2020', value: 68 },
+                { year: '2021', value: 72 },
+                { year: '2022', value: 76 },
+                { year: '2023', value: 79 },
+                { year: '2024', value: 82 },
+              ]} margin={{ left: 8, right: 8, top: 10, bottom: 8 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="year" stroke="#6b7280" />
+                <YAxis domain={[65, 85]} tick={{ fill: '#6b7280' }} stroke="#6b7280" />
+                <Tooltip />
+                <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={3} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
 
-          {/* Error rates bars */}
+          {/* Error rates Radar */}
           <div className="rounded-lg border p-4 text-left">
-            <h3 className="font-semibold mb-2">多題型錯誤率</h3>
-            {[
-              { label: '綜合測驗', v: 73 },
-              { label: '單字', v: 58 },
-              { label: '文意選填', v: 61 },
-              { label: '閱讀測驗', v: 52 },
-              { label: '翻譯', v: 56 },
-            ].map((r) => (
-              <div key={r.label} className="mb-2">
-                <div className="flex justify-between text-sm"><span>{r.label}</span><span className="text-muted-foreground">{r.v}%</span></div>
-                <div className="h-2 bg-muted rounded">
-                  <div className="h-2 bg-red-500 rounded" style={{ width: `${r.v}%` }} />
-                </div>
-              </div>
-            ))}
+            <h3 className="font-semibold mb-2">多題型錯誤率（%）</h3>
+            <ResponsiveContainer width="100%" height={220}>
+              <RadarChart data={[
+                { subject: '綜合測驗', v: 73 },
+                { subject: '單字', v: 58 },
+                { subject: '文意選填', v: 61 },
+                { subject: '閱讀測驗', v: 52 },
+                { subject: '翻譯', v: 56 },
+              ]} outerRadius={80}>
+                <PolarGrid />
+                <PolarAngleAxis dataKey="subject" tick={{ fill: '#6b7280', fontSize: 12 }} />
+                <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: '#9ca3af', fontSize: 10 }} />
+                <Radar name="錯誤率" dataKey="v" stroke="#f43f5e" fill="#f43f5e" fillOpacity={0.25} />
+              </RadarChart>
+            </ResponsiveContainer>
           </div>
         </div>
         <p className="text-center text-sm text-muted-foreground">補習提供題目，我們用數據讓努力變有效。</p>
