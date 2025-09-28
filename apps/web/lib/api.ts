@@ -2,6 +2,7 @@ import { RSLiteAttemptInput, SurveyInput, WaitlistInput } from '../types/domain'
 import useAuthStore from '../state/useAuthStore';
 import { getUtm } from './utm';
 import { toast } from '../components/ui/Toast';
+import { addToWaitingList } from './db';
 
 // Fix: Cast import.meta to any to access Vite environment variables.
 const API_BASE = (import.meta as any)?.env?.VITE_API_BASE || '/api';
@@ -59,13 +60,16 @@ export const submitRSLiteAttempt = async (data: RSLiteAttemptInput) => {
 };
 
 export const submitWaitlist = async (data: WaitlistInput) => {
-    // const response = await fetchWithAuth('/waitlist', {
-    //     method: 'POST',
-    //     body: JSON.stringify(data),
-    // });
-    // return response.json();
-    console.log('Submitting to Waitlist:', data);
-    return mockApi({ ok: true });
+    try {
+        // Try Firestore first (if configured)
+        const res = await addToWaitingList(data as any);
+        console.log('Waitlist stored in Firestore:', res);
+        return { ok: true, id: res.id };
+    } catch (e) {
+        console.warn('Firestore not configured or failed, falling back to mock.', e);
+        console.log('Submitting to Waitlist (mock):', data);
+        return mockApi({ ok: true });
+    }
 };
 
 export const submitFoundingSurvey = async (data: SurveyInput) => {

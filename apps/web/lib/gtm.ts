@@ -1,13 +1,33 @@
+const CONSENT_KEY = 'plms_consent_marketing';
+
+export function hasMarketingConsent(): boolean {
+  try {
+    return localStorage.getItem(CONSENT_KEY) === 'granted';
+  } catch {
+    return false;
+  }
+}
+
+export function setMarketingConsent(granted: boolean) {
+  try {
+    localStorage.setItem(CONSENT_KEY, granted ? 'granted' : 'denied');
+  } catch {}
+}
+
 export function initializeGTM() {
   const gtmId = import.meta.env.VITE_GTM_ID as string | undefined;
-  if (!gtmId) {
-    return; // GTM not configured
-  }
+  if (!gtmId) return; // GTM not configured
+  if (!hasMarketingConsent()) return; // respect consent
+
+  if ((window as any).dataLayer && (window as any).__gtmInjected) return;
+
+  // bootstrap dataLayer
+  (window as any).dataLayer = (window as any).dataLayer || [];
+  (window as any).dataLayer.push({ event: 'plms_boot' });
 
   // Avoid duplicate injection
   if (document.getElementById('gtm-script')) return;
 
-  // Insert GTM <script> in <head>
   const script = document.createElement('script');
   script.id = 'gtm-script';
   script.innerHTML = `(
@@ -18,12 +38,11 @@ export function initializeGTM() {
     })(window,document,'script','dataLayer','${gtmId}');`;
   document.head.appendChild(script);
 
-  // Insert <noscript> right after <body> start
   const noscript = document.createElement('noscript');
   noscript.id = 'gtm-noscript';
-  noscript.innerHTML = `<iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}"
-height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
-  const body = document.body;
-  body.insertBefore(noscript, body.firstChild);
+  noscript.innerHTML = `<iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
+  document.body.insertBefore(noscript, document.body.firstChild);
+
+  (window as any).__gtmInjected = true;
 }
 

@@ -8,6 +8,7 @@ import RSExplainer from './components/RSExplainer';
 import useUiStore from './state/useUiStore';
 import FoundingSurveyModal from './components/FoundingSurveyModal';
 import { Toaster } from './components/ui/Toast';
+import ConsentBanner from './components/ConsentBanner';
 
 const Landing = lazy(() => import('./pages/Landing'));
 const ReadyScoreLite = lazy(() => import('./pages/ReadyScoreLite'));
@@ -43,6 +44,7 @@ const App: React.FC = () => {
                 {isRsExplainerModalOpen && <RSExplainer isOpen={isRsExplainerModalOpen} onClose={closeRsExplainerModal} />}
                 {isSurveyModalOpen && <FoundingSurveyModal isOpen={isSurveyModalOpen} onClose={closeSurveyModal} />}
                 <Toaster />
+                <ConsentBanner />
             </div>
         </HashRouter>
     );
