@@ -1,0 +1,9 @@
+FROM node:18-alpine
+WORKDIR /srv
+COPY package*.json ./
+RUN npm ci --omit=dev || npm install --omit=dev
+COPY src ./src
+ENV PORT=8080
+EXPOSE 8080
+CMD ["node", "src/index.js"]
+

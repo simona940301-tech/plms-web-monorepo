@@ -8,8 +8,8 @@
     "start": "NODE_ENV=production node src/index.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.19.2",
     "firebase-admin": "^12.5.0"
   }
 }
-

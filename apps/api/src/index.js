@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 
 // Optional Firebase Admin bootstrap
 let admin = null;
@@ -26,6 +27,22 @@ try {
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: true, credentials: true }));
+
+// Optional auth middleware using Firebase ID tokens
+async function authRequired(req, res, next) {
+  try {
+    if (!admin) return res.status(501).json({ error: 'auth not configured' });
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    if (!token) return res.status(401).json({ error: 'missing bearer token' });
+    const decoded = await admin.auth().verifyIdToken(token);
+    req.user = decoded; // attach user
+    return next();
+  } catch (err) {
+    return res.status(401).json({ error: 'invalid token' });
+  }
+}
 
 // Healthcheck
 app.get('/health', (req, res) => {
@@ -38,17 +55,8 @@ app.get('/api/v1/version', (req, res) => {
 });
 
 // Example: authenticated endpoint using Firebase (optional)
-app.get('/api/v1/me', async (req, res) => {
-  try {
-    if (!admin) return res.status(501).json({ error: 'auth not configured' });
-    const authHeader = req.headers.authorization || '';
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
-    if (!token) return res.status(401).json({ error: 'missing bearer token' });
-    const decoded = await admin.auth().verifyIdToken(token);
-    return res.json({ uid: decoded.uid, claims: decoded });
-  } catch (err) {
-    return res.status(401).json({ error: 'invalid token' });
-  }
+app.get('/api/v1/me', authRequired, async (req, res) => {
+  return res.json({ uid: req.user.uid, claims: req.user });
 });
 
 const PORT = process.env.PORT || 8080;
@@ -56,4 +64,3 @@ app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`[api] listening on http://localhost:${PORT}`);
 });
-

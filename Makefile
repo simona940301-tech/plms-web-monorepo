@@ -1,4 +1,4 @@
-.PHONY: web web-dev web-build web-preview dev
+.PHONY: web web-dev web-build web-preview dev dev-all
 
 web:
 	@$(MAKE) -s web-dev
@@ -16,6 +16,10 @@ web-preview:
 	@cd apps/web && npm run preview
 
 dev: web-dev
+
+dev-all:
+	@echo "[dev] starting web and api..."
+	@bash -lc '(cd apps/api && [ -f package.json ] && (npm install >/dev/null 2>&1 || npm install) && npm run dev) & (cd apps/web && npm run dev)';
 
 .PHONY: api api-dev api-start
 
