@@ -55,24 +55,78 @@ const Landing: React.FC = () => {
         </p>
       </section>
 
-      {/* Problem (masonry-like simple grid) */}
+      {/* Problem (with your data) */}
       <section className="space-y-4">
         <h2 className="text-2xl font-bold">為什麼需要 Ready Score？</h2>
         <div className="grid md:grid-cols-3 gap-4">
+          {/* Pie via conic-gradient */}
           <div className="rounded-lg border p-4 text-left">
             <h3 className="font-semibold mb-2">大學生科系滿意度</h3>
-            <p className="text-sm text-muted-foreground">超過一半後悔科系（示意圖）</p>
-            <div className="h-40 bg-muted rounded" />
+            <div className="flex items-center gap-4">
+              {(() => {
+                const regret = 55; const ok = 32; const satisfied = 13;
+                const a = regret * 3.6; const b = (regret + ok) * 3.6;
+                const style = {
+                  backgroundImage: `conic-gradient(#ef4444 0 ${a}deg, #f59e0b ${a}deg ${b}deg, #10b981 ${b}deg 360deg)`,
+                } as React.CSSProperties;
+                return (
+                  <div className="w-28 h-28 rounded-full" style={style} />
+                );
+              })()}
+              <ul className="text-sm">
+                <li className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-full bg-red-500" /> 後悔 55%</li>
+                <li className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-full bg-amber-500" /> 還可以 32%</li>
+                <li className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-full bg-emerald-500" /> 滿意 13%</li>
+              </ul>
+            </div>
           </div>
+
+          {/* Anxiety line (simple SVG) */}
           <div className="rounded-lg border p-4 text-left">
-            <h3 className="font-semibold mb-2">學生焦慮指數</h3>
-            <p className="text-sm text-muted-foreground">近年持續上升（示意圖）</p>
-            <div className="h-40 bg-muted rounded" />
+            <h3 className="font-semibold mb-2">學生焦慮指數（逐年）</h3>
+            {(() => {
+              const points = [68,72,76,79,82];
+              const years = [2020,2021,2022,2023,2024];
+              const w = 220, h = 110, pad = 10;
+              const max = 100, min = 0;
+              const stepX = (w - pad*2) / (points.length - 1);
+              const toY = (v:number) => h - pad - ((v-min)/(max-min))*(h - pad*2);
+              let d = '';
+              points.forEach((v,i)=>{ const x = pad + i*stepX; const y = toY(v); d += (i? ' L':'M')+x+','+y; });
+              const circles = points.map((v,i)=>{
+                const x = pad + i*stepX; const y = toY(v); return <circle key={i} cx={x} cy={y} r={3} className="fill-primary"/>;
+              });
+              return (
+                <div className="flex items-end gap-3">
+                  <svg width={w} height={h} className="border rounded bg-white">
+                    <path d={d} className="stroke-primary" fill="none" strokeWidth={2} />
+                    {circles}
+                  </svg>
+                  <ul className="text-xs text-muted-foreground">
+                    {years.map((y,i)=> <li key={y}>{y}: {points[i]}</li>)}
+                  </ul>
+                </div>
+              );
+            })()}
           </div>
+
+          {/* Error rates bars */}
           <div className="rounded-lg border p-4 text-left">
             <h3 className="font-semibold mb-2">多題型錯誤率</h3>
-            <p className="text-sm text-muted-foreground">高達七成（示意圖）</p>
-            <div className="h-40 bg-muted rounded" />
+            {[
+              { label: '綜合測驗', v: 73 },
+              { label: '單字', v: 58 },
+              { label: '文意選填', v: 61 },
+              { label: '閱讀測驗', v: 52 },
+              { label: '翻譯', v: 56 },
+            ].map((r) => (
+              <div key={r.label} className="mb-2">
+                <div className="flex justify-between text-sm"><span>{r.label}</span><span className="text-muted-foreground">{r.v}%</span></div>
+                <div className="h-2 bg-muted rounded">
+                  <div className="h-2 bg-red-500 rounded" style={{ width: `${r.v}%` }} />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
         <p className="text-center text-sm text-muted-foreground">補習提供題目，我們用數據讓努力變有效。</p>
