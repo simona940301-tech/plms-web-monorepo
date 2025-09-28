@@ -20,10 +20,10 @@ const Header: React.FC = () => {
                     <img
                       src="/logo.png"
                       alt="學人經 XueRenJing logo"
-                      className="h-7 w-7 object-contain hidden sm:block"
+                      className="h-8 w-8 md:h-9 md:w-9 object-contain hidden sm:block"
                       onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/logo.svg'; (e.currentTarget as HTMLImageElement).style.display = 'block'; }}
                     />
-                    <span className="font-bold">學人經 XueRenJing</span>
+                    <span className="font-bold tracking-wide">學人經 XueRenJing</span>
                 </Link>
                 <div className="flex flex-1 items-center justify-end space-x-4">
                     <nav className="hidden md:flex gap-6 text-sm font-medium">
