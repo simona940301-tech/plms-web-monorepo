@@ -5,7 +5,7 @@ import { toast } from '../components/ui/Toast';
 import { addToWaitingList } from './db';
 
 // Fix: Cast import.meta to any to access Vite environment variables.
-const API_BASE = (import.meta as any)?.env?.VITE_API_BASE || '/api';
+const API_BASE = (import.meta as any)?.env?.VITE_API_BASE || '';
 
 async function fetchWithAuth(endpoint: string, options: RequestInit = {}): Promise<Response> {
     const { idToken } = useAuthStore.getState();
@@ -60,14 +60,26 @@ export const submitRSLiteAttempt = async (data: RSLiteAttemptInput) => {
 };
 
 export const submitWaitlist = async (data: WaitlistInput) => {
+    const utm = getUtm() || undefined;
+    // Prefer API if configured
+    if (API_BASE) {
+        try {
+            const resp = await fetchWithAuth('/waitlist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...data, utm }),
+            });
+            return await resp.json();
+        } catch (e) {
+            console.warn('API waitlist failed, falling back to Firestore...', e);
+        }
+    }
+    // Fallback to Firestore (client-side)
     try {
-        // Try Firestore first (if configured)
-        const res = await addToWaitingList(data as any);
-        console.log('Waitlist stored in Firestore:', res);
+        const res = await addToWaitingList({ ...data, utm } as any);
         return { ok: true, id: res.id };
     } catch (e) {
-        console.warn('Firestore not configured or failed, falling back to mock.', e);
-        console.log('Submitting to Waitlist (mock):', data);
+        console.warn('Firestore not configured; using mock.');
         return mockApi({ ok: true });
     }
 };

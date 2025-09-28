@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const { z } = require('zod');
 
 // Optional Firebase Admin bootstrap
 let admin = null;
@@ -27,7 +28,9 @@ try {
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: true, credentials: true }));
+// CORS allowlist via env CORS_ORIGINS (comma separated)
+const allow = (process.env.CORS_ORIGINS || 'http://localhost:3000').split(',').map(s => s.trim());
+app.use(cors({ origin: allow, credentials: true }));
 
 // Optional auth middleware using Firebase ID tokens
 async function authRequired(req, res, next) {
@@ -57,6 +60,39 @@ app.get('/api/v1/version', (req, res) => {
 // Example: authenticated endpoint using Firebase (optional)
 app.get('/api/v1/me', authRequired, async (req, res) => {
   return res.json({ uid: req.user.uid, claims: req.user });
+});
+
+// Waitlist endpoint (server writes to Firestore)
+const WaitlistInput = z.object({
+  email: z.string().email(),
+  name: z.string().min(1),
+  grade: z.string().min(1),
+  target_major: z.string().optional().nullable(),
+  utm: z.record(z.string()).optional(),
+});
+
+app.post('/waitlist', async (req, res) => {
+  try {
+    if (!admin) return res.status(501).json({ ok:false, code:'DB_NOT_CONFIGURED', message:'Firebase Admin not configured' });
+    const parsed = WaitlistInput.safeParse(req.body || {});
+    if (!parsed.success) {
+      return res.status(400).json({ ok:false, code:'VALIDATION', message:'invalid body', issues: parsed.error.issues });
+    }
+    const { email, name, grade, target_major, utm } = parsed.data;
+    const db = admin.firestore();
+    const doc = await db.collection('waiting_list').add({
+      email,
+      name,
+      grade,
+      target_major: target_major ?? null,
+      utm: utm || null,
+      created_at: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    return res.status(201).json({ ok:true, id: doc.id });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ ok:false, code:'INTERNAL', message:'Server error' });
+  }
 });
 
 const PORT = process.env.PORT || 8080;

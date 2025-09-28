@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // waiting_list: create only via server; deny direct client writes by default
+    match /waiting_list/{docId} {
+      allow read: if false; // no direct reads from clients
+      allow create: if false; // only server (Admin SDK) writes
+      allow update, delete: if false;
+    }
+  }
+}
+
