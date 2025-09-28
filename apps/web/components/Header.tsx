@@ -16,8 +16,14 @@ const Header: React.FC = () => {
         <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm">
             <div className="container mx-auto flex h-16 items-center space-x-4 px-4 sm:justify-between sm:space-x-0">
                 <Link to="/" className="flex items-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-primary"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    <span className="font-bold">PLMS</span>
+                    {/* Brand logo (place your file at public/logo.png). Fallback to text if not found. */}
+                    <img
+                      src="/logo.png"
+                      alt="學人經 XueRenJing logo"
+                      className="h-7 w-7 object-contain hidden sm:block"
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                    />
+                    <span className="font-bold">學人經 XueRenJing</span>
                 </Link>
                 <div className="flex flex-1 items-center justify-end space-x-4">
                     <nav className="hidden md:flex gap-6 text-sm font-medium">
