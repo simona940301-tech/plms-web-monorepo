@@ -37,13 +37,15 @@ jobs:
         VITE_FIREBASE_APP_ID: 1:761623827343:web:11f6d56c733cae0a1d71fa
         VITE_GTM_ID: GTM-M82RNXD7
         
+    - name: Install Vercel CLI
+      run: npm install -g vercel@latest
+      
     - name: Deploy to Vercel
-      uses: amondnet/vercel-action@v25
-      with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        working-directory: apps/web
-        vercel-args: '--prod'
+      run: |
+        cd apps/web
+        vercel --token ${{ secrets.VERCEL_TOKEN }} --prod --yes
+      env:
+        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         
     - name: Notify deployment status
       if: always()
