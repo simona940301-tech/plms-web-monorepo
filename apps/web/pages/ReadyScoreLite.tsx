@@ -99,7 +99,8 @@ const ReadyScoreLite: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const current = question_bank[idx];
+  const current = question_bank[Math.min(idx, question_bank.length - 1)];
+  const progress = Math.round((idx / question_bank.length) * 100);
   const on_choice = (i: number) => {
     const next_idx = idx + 1;
     set_answers(a => ({ ...a, [current.id]: i }));
@@ -192,8 +193,6 @@ const ReadyScoreLite: React.FC = () => {
     );
   }
 
-  const current = question_bank[idx];
-  const progress = Math.round(((idx) / question_bank.length) * 100);
   return (
     <div className="container mx-auto px-4 py-10 max-w-3xl">
       <div className="w-full bg-muted rounded-full h-2 mb-6">
