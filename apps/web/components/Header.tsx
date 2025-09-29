@@ -21,6 +21,9 @@ const Header: React.FC = () => {
                       src="/logo.png"
                       alt="學人經 XueRenJing 品牌標誌"
                       className="h-10 w-10 md:h-12 md:w-12 object-contain"
+                      loading="eager"
+                      decoding="async"
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/logo.svg'; }}
                     />
                     <div className="flex flex-col">
                         <span className="font-bold text-lg tracking-wide">學人經 XueRenJing</span>
