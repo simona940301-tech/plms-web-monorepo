@@ -23,9 +23,12 @@ GTM setup (promo.xuerenjing.com)
 Create GA4 Event tag for each (Trigger: Custom Event with same name):
 - lp_view
 - cta_click
-- rs_start
-- rs_complete (add params: score, correct_count)
-- core_loop_complete
+- rs_lite_start
+- rs_lite_complete (params: duration_sec, seed_rs, ci_low, ci_high)
+- result_view (params: seed_rs, ci_low, ci_high)
+- waitlist_submit (optional params: persona_stage, motivation)
+- line_join_click
+- core_loop_complete (reserved for later)
 
 5) Pixels (optional, via GTM templates)
 - Meta Pixel: PageView (All Pages), Lead (waitlist success), CompleteRegistration (rs_complete)
@@ -33,4 +36,3 @@ Create GA4 Event tag for each (Trigger: Custom Event with same name):
 
 6) Consent
 - 你站點已使用同意後才載入 GTM；如需 Consent Mode v2，可在 GTM Admin 開啟並依需調整。
-

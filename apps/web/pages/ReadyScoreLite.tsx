@@ -3,6 +3,8 @@ import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { logEvent } from '../lib/events';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
+import useUiStore from '../state/useUiStore';
+import { addRsAttempt } from '../lib/db';
 
 type kind_t = 'vocab' | 'grammar' | 'translation' | 'psych';
 type question_t = { id: string; kind: kind_t; stem: string; choices?: string[]; answer?: number };
@@ -84,6 +86,7 @@ const ReadyScoreLite: React.FC = () => {
   const [answers, set_answers] = useState<answers_t>({});
   const [started_at, set_started_at] = useState<number | null>(null);
   const [done, set_done] = useState(false);
+  const open_waitlist_modal = useUiStore(s=>s.openWaitlistModal);
 
   useEffect(() => { set_started_at(Date.now()); logEvent('rs_lite_start'); }, []);
 
@@ -94,7 +97,26 @@ const ReadyScoreLite: React.FC = () => {
   const go_next = () => set_idx(i=>Math.min(question_bank.length,i+1));
 
   const result = useMemo(() => done ? compute_seed_rs(answers) : null, [done, answers]);
-  const finish = () => { set_done(true); if (started_at){ const dur=Math.round((Date.now()-started_at)/1000); const r=compute_seed_rs(answers); logEvent('rs_lite_complete',{duration_sec:dur, seed_rs:Math.round(r.seed), ci_low:Math.round(r.ci_low), ci_high:Math.round(r.ci_high)});} };
+  const finish = async () => {
+    set_done(true);
+    if (started_at){
+      const duration_sec = Math.round((Date.now()-started_at)/1000);
+      const r = compute_seed_rs(answers);
+      logEvent('rs_lite_complete',{duration_sec, seed_rs:Math.round(r.seed), ci_low:Math.round(r.ci_low), ci_high:Math.round(r.ci_high)});
+      // Best-effort write to Firestore if configured
+      try {
+        await addRsAttempt({
+          type: 'placement',
+          seed_ready_score: r.seed,
+          ci_low: r.ci_low,
+          ci_high: r.ci_high,
+          radar: r.radar,
+          raw_p: r.p,
+          duration_sec,
+        });
+      } catch {}
+    }
+  };
 
   if (done && result) {
     const seed_lo = Math.max(0, Math.round(result.seed - 3));
@@ -123,8 +145,8 @@ const ReadyScoreLite: React.FC = () => {
             <p className="text-sm text-muted-foreground">3 題文法 + 1 題翻譯 + 1 張錯題（明天持續）</p>
           </div>
           <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-            <Button className="px-6">加入 LINE 解鎖完整診斷</Button>
-            <Button variant="outline" className="px-6" onClick={()=>logEvent('waitlist_submit')}>加入 Waiting List</Button>
+            <Button className="px-6" onClick={()=>logEvent('line_join_click')}>加入 LINE 解鎖完整診斷</Button>
+            <Button variant="outline" className="px-6" onClick={()=>{ logEvent('waitlist_submit'); open_waitlist_modal(); }}>加入 Waiting List</Button>
           </div>
         </div>
       </div>
@@ -181,4 +203,3 @@ const ReadyScoreLite: React.FC = () => {
 }
 
 export default ReadyScoreLite;
-

@@ -26,3 +26,12 @@ export async function addToWaitingList(data: Record<string, any>) {
   return { id: doc.id };
 }
 
+export async function addRsAttempt(data: Record<string, any>) {
+  const database = getDb();
+  if (!database) throw new Error('Firestore is not configured');
+  const doc = await addDoc(collection(database, 'rs_attempts'), {
+    ...data,
+    created_at: serverTimestamp(),
+  });
+  return { id: doc.id };
+}
