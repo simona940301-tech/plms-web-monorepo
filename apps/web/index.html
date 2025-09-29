@@ -95,6 +95,11 @@
   <body>
     <div id="root"></div>
     <div id="toast-container" class="fixed top-0 right-0 p-4 space-y-2 z-[100]"></div>
-    <script type="module" src="/index.tsx?v=20241220"></script>
+    <script type="module" src="/index.tsx"></script>
+    <script>
+      // 動態版本號，自動更新快取
+      const version = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'dev';
+      document.querySelector('script[type="module"]').src = `/index.tsx?v=${version}`;
+    </script>
   </body>
 </html>
