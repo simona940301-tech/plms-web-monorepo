@@ -46,14 +46,14 @@ const Landing: React.FC = () => {
       {/* Hero */}
       <section className="text-center pt-6">
         <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
-          最懂學測的台大團隊，為你量身打造最高效的衝刺計劃。
+          不是補習，是效率引擎。7 分鐘測出你的準備度。
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground mb-6">
           考前 {daysToExam} 天，不再無效努力（自動倒數到考試日）。
         </p>
         <div className="flex items-center justify-center gap-3">
-          <Button onClick={startLite}>Get my Ready Score</Button>
-          <Button variant="outline" onClick={openExplainer}>What is Ready Score?</Button>
+          <Button onClick={startLite}>開始 Ready Score Lite 測驗</Button>
+          <Button variant="outline" onClick={openExplainer}>加入 Waiting List（解鎖完整讀書計劃）</Button>
         </div>
         <p className="text-sm text-muted-foreground mt-3">
           👉 立即加入，即可免費獲得《Top 10 文法學霸筆記》 PDF 🎁

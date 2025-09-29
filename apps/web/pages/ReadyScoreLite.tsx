@@ -6,6 +6,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import useUiStore from '../state/useUiStore';
 import useAuthStore from '../state/useAuthStore';
 import { addRsAttempt, set_onboarding } from '../lib/db';
+import { useNavigate } from 'react-router-dom';
 
 type kind_t = 'vocab' | 'grammar' | 'translation' | 'psych';
 type question_t = { id: string; kind: kind_t; stem: string; choices?: string[]; answer?: number };
@@ -83,6 +84,7 @@ function compute_seed_rs(res: answers_t) {
 }
 
 const ReadyScoreLite: React.FC = () => {
+  const navigate = useNavigate();
   const [idx, set_idx] = useState(0);
   const [answers, set_answers] = useState<answers_t>({});
   const [started_at, set_started_at] = useState<number | null>(null);
@@ -91,6 +93,11 @@ const ReadyScoreLite: React.FC = () => {
   const user = useAuthStore(state => state.user);
 
   useEffect(() => { set_started_at(Date.now()); logEvent('rs_lite_start'); }, []);
+  useEffect(() => {
+    if (!user) {
+      navigate('/onboarding', { replace: true });
+    }
+  }, [user, navigate]);
 
   const current = question_bank[idx];
   const on_choice = (i: number) => {

@@ -40,7 +40,7 @@ export async function addRsAttempt(data: Record<string, any>) {
 export async function upsert_user(uid: string, data: Record<string, any>) {
   const database = getDb();
   if (!database) throw new Error('Firestore is not configured');
-  await setDoc(doc(database, 'users', uid), { ...data, updated_at: serverTimestamp() }, { merge: true });
+  await setDoc(doc(database, 'users', uid), { ...data, updated_at: serverTimestamp(), created_at: serverTimestamp() }, { merge: true });
 }
 
 export async function set_onboarding(uid: string, step: number, payload: Record<string, any>) {

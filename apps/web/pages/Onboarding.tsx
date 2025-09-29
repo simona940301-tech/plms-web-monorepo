@@ -19,6 +19,12 @@ const Onboarding: React.FC = () => {
   const [target_band, set_target_band] = useState('');
   const [self_level, set_self_level] = useState('');
 
+  useEffect(() => {
+    if (user && step === 0) {
+      set_step(1);
+    }
+  }, [user, step]);
+
   useEffect(() => { logEvent('onboarding_view', { step }); }, [step]);
 
   const do_login = async (provider: 'google'|'facebook'|'apple') => {
