@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import './src/index.css';
 import { initializeTheme } from './lib/theme';
 import { initializeUtm } from './lib/utm';
 import { initializeGTM } from './lib/gtm';
