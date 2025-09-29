@@ -15,15 +15,17 @@ const Header: React.FC = () => {
     return (
         <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm">
             <div className="container mx-auto flex h-16 items-center space-x-4 px-4 sm:justify-between sm:space-x-0">
-                <Link to="/" className="flex items-center space-x-2">
-                    {/* Brand logo: prefers PNG; falls back to SVG placeholder */}
+                <Link to="/" className="flex items-center space-x-3">
+                    {/* Brand logo: 使用你上傳的 PNG 檔 */}
                     <img
                       src="/logo.png"
-                      alt="學人經 XueRenJing logo"
-                      className="h-8 w-8 md:h-9 md:w-9 object-contain hidden sm:block"
-                      onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/logo.svg'; (e.currentTarget as HTMLImageElement).style.display = 'block'; }}
+                      alt="學人經 XueRenJing 品牌標誌"
+                      className="h-10 w-10 md:h-12 md:w-12 object-contain"
                     />
-                    <span className="font-bold tracking-wide">學人經 XueRenJing</span>
+                    <div className="flex flex-col">
+                        <span className="font-bold text-lg tracking-wide">學人經 XueRenJing</span>
+                        <span className="text-xs text-muted-foreground hidden sm:block">Ready Score</span>
+                    </div>
                 </Link>
                 <div className="flex flex-1 items-center justify-end space-x-4">
                     <nav className="hidden md:flex gap-6 text-sm font-medium">
