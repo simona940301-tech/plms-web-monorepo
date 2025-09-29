@@ -13,6 +13,10 @@
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="mask-icon" href="/logo.svg" color="#3776A1" />
     <meta name="theme-color" content="#3776A1" />
+    <!-- Force cache invalidation -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <!-- Tailwind CSS is bundled via Vite; no direct link needed -->
     <style>
       :root {
@@ -91,6 +95,6 @@
   <body>
     <div id="root"></div>
     <div id="toast-container" class="fixed top-0 right-0 p-4 space-y-2 z-[100]"></div>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="/index.tsx?v=20241220"></script>
   </body>
 </html>
