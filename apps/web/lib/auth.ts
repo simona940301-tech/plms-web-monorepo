@@ -8,18 +8,29 @@ import {
     Auth,
 } from 'firebase/auth';
 
-// Fix: Cast import.meta to any to access Vite environment variables.
+// Firebase configuration with proper error handling
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
     authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
     projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
+
+// Debug log in development
+if (import.meta.env.DEV) {
+    console.log('Firebase config:', firebaseConfig);
+}
 
 let auth: Auth | null = null;
 
 if (firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId) {
-    const app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
+    try {
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        console.log('Firebase Auth initialized successfully');
+    } catch (error) {
+        console.error('Firebase initialization failed:', error);
+    }
 } else {
     console.warn("Firebase config is missing, Auth features will be disabled.", firebaseConfig);
 }
