@@ -12,6 +12,7 @@ import ConsentBanner from './components/ConsentBanner';
 
 const Landing = lazy(() => import('./pages/Landing'));
 const ReadyScoreLite = lazy(() => import('./pages/ReadyScoreLite'));
+const Onboarding = lazy(() => import('./pages/Onboarding'));
 const Parents = lazy(() => import('./pages/Parents'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
@@ -31,6 +32,7 @@ const App: React.FC = () => {
                     <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
                         <Routes>
                             <Route path="/" element={<Landing />} />
+                            <Route path="/onboarding" element={<Onboarding />} />
                             <Route path="/ready-score-lite" element={<ReadyScoreLite />} />
                             <Route path="/parents" element={<Parents />} />
                             <Route path="/privacy" element={<Privacy />} />

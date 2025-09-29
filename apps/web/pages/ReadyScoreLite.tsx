@@ -4,7 +4,8 @@ import { Card, CardContent } from '../components/ui/Card';
 import { logEvent } from '../lib/events';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import useUiStore from '../state/useUiStore';
-import { addRsAttempt } from '../lib/db';
+import useAuthStore from '../state/useAuthStore';
+import { addRsAttempt, set_onboarding } from '../lib/db';
 
 type kind_t = 'vocab' | 'grammar' | 'translation' | 'psych';
 type question_t = { id: string; kind: kind_t; stem: string; choices?: string[]; answer?: number };
@@ -87,17 +88,35 @@ const ReadyScoreLite: React.FC = () => {
   const [started_at, set_started_at] = useState<number | null>(null);
   const [done, set_done] = useState(false);
   const open_waitlist_modal = useUiStore(s=>s.openWaitlistModal);
+  const user = useAuthStore(state => state.user);
 
   useEffect(() => { set_started_at(Date.now()); logEvent('rs_lite_start'); }, []);
 
   const current = question_bank[idx];
-  const on_choice = (i: number) => { set_answers(a => ({ ...a, [current.id]: i })); setTimeout(()=>set_idx(i=>Math.min(i+1, question_bank.length)), 120); };
+  const on_choice = (i: number) => {
+    const next_idx = idx + 1;
+    set_answers(a => ({ ...a, [current.id]: i }));
+    setTimeout(() => {
+      if (next_idx >= question_bank.length) {
+        finish();
+      } else {
+        set_idx(next_idx);
+      }
+    }, 150);
+  };
   const on_input = (val: string) => set_answers(a => ({ ...a, [current.id]: val }));
   const go_prev = () => set_idx(i=>Math.max(0,i-1));
-  const go_next = () => set_idx(i=>Math.min(question_bank.length,i+1));
+  const go_next = () => {
+    if (idx >= question_bank.length - 1) {
+      finish();
+    } else {
+      set_idx(idx + 1);
+    }
+  };
 
   const result = useMemo(() => done ? compute_seed_rs(answers) : null, [done, answers]);
   const finish = async () => {
+    if (done) return;
     set_done(true);
     if (started_at){
       const duration_sec = Math.round((Date.now()-started_at)/1000);
@@ -113,14 +132,27 @@ const ReadyScoreLite: React.FC = () => {
           radar: r.radar,
           raw_p: r.p,
           duration_sec,
+          user_id: user?.uid ?? null,
         });
+        if (user) {
+          await set_onboarding(user.uid, 3, { completed: true, seed_ready_score: r.seed });
+        }
       } catch {}
     }
   };
 
+  useEffect(() => {
+    if (done && result) {
+      logEvent('result_view', { seed_rs: Math.round(result.seed), ci_low: Math.round(result.ci_low), ci_high: Math.round(result.ci_high) });
+    }
+  }, [done, result]);
+
   if (done && result) {
     const seed_lo = Math.max(0, Math.round(result.seed - 3));
     const seed_hi = Math.min(100, Math.round(result.seed + 3));
+    const motivation_labels = ['考上理想校系','分數穩定','建立習慣','減少焦慮','打好基礎'];
+    const motivation_idx = Number(answers['q15']);
+    const motivation = Number.isFinite(motivation_idx) ? motivation_labels[motivation_idx] : null;
     return (
       <div className="container mx-auto px-4 py-10 max-w-2xl">
         <div className="bg-white dark:bg-background rounded-2xl shadow p-8 text-center">
@@ -145,15 +177,16 @@ const ReadyScoreLite: React.FC = () => {
             <p className="text-sm text-muted-foreground">3 題文法 + 1 題翻譯 + 1 張錯題（明天持續）</p>
           </div>
           <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-            <Button className="px-6" onClick={()=>logEvent('line_join_click')}>加入 LINE 解鎖完整診斷</Button>
-            <Button variant="outline" className="px-6" onClick={()=>{ logEvent('waitlist_submit'); open_waitlist_modal(); }}>加入 Waiting List</Button>
+            <Button className="px-6" onClick={()=>logEvent('line_join_click', { seed_rs: Math.round(result.seed) })}>加入 LINE 解鎖完整診斷</Button>
+            <Button variant="outline" className="px-6" onClick={()=>{ logEvent('waitlist_submit', { motivation }); open_waitlist_modal(); }}>加入 Waiting List</Button>
           </div>
         </div>
       </div>
     );
   }
 
-  const progress = Math.round((idx / question_bank.length) * 100);
+  const current = question_bank[idx];
+  const progress = Math.round(((idx) / question_bank.length) * 100);
   return (
     <div className="container mx-auto px-4 py-10 max-w-3xl">
       <div className="w-full bg-muted rounded-full h-2 mb-6">

@@ -28,8 +28,7 @@ const Landing: React.FC = () => {
 
   const startLite = useCallback(() => {
     logEvent('cta_click', { cta_id: 'start_rslite', page: 'landing' });
-    // Primary CTA: Auth → RS Lite
-    signIn('google').finally(() => navigate('/ready-score-lite'));
+    navigate('/onboarding');
   }, [navigate]);
 
   const openExplainer = useCallback(() => {

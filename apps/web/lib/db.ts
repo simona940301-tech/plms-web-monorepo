@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 
 const cfg = {
   apiKey: (import.meta as any)?.env?.VITE_FIREBASE_API_KEY,
@@ -34,4 +35,21 @@ export async function addRsAttempt(data: Record<string, any>) {
     created_at: serverTimestamp(),
   });
   return { id: doc.id };
+}
+
+export async function upsert_user(uid: string, data: Record<string, any>) {
+  const database = getDb();
+  if (!database) throw new Error('Firestore is not configured');
+  await setDoc(doc(database, 'users', uid), { ...data, updated_at: serverTimestamp() }, { merge: true });
+}
+
+export async function set_onboarding(uid: string, step: number, payload: Record<string, any>) {
+  const database = getDb();
+  if (!database) throw new Error('Firestore is not configured');
+  const { completed, ...rest } = payload || {};
+  const data = {
+    onboarding: { step, completed: completed ?? false, ...rest },
+    updated_at: serverTimestamp(),
+  };
+  await setDoc(doc(database, 'users', uid), data, { merge: true });
 }
