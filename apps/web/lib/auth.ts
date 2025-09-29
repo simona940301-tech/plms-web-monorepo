@@ -21,7 +21,7 @@ if (firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.project
     const app = initializeApp(firebaseConfig);
     auth = getAuth(app);
 } else {
-    console.warn("Firebase config is missing, Auth features will be disabled.");
+    console.warn("Firebase config is missing, Auth features will be disabled.", firebaseConfig);
 }
 
 export { auth };
