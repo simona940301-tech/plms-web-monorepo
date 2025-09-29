@@ -1,12 +1,11 @@
 import { initializeApp } from 'firebase/app';
-import { 
-    getAuth, 
-    GoogleAuthProvider, 
-    FacebookAuthProvider, 
-    OAuthProvider,
+import {
+    getAuth,
+    GoogleAuthProvider,
+    FacebookAuthProvider,
     signInWithPopup,
     User,
-    Auth
+    Auth,
 } from 'firebase/auth';
 
 // Fix: Cast import.meta to any to access Vite environment variables.
@@ -29,9 +28,8 @@ export { auth };
 
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
-const appleProvider = new OAuthProvider('apple.com');
 
-export type AuthProviderType = 'google' | 'facebook' | 'apple';
+export type AuthProviderType = 'google' | 'facebook';
 
 export const signIn = async (providerName: AuthProviderType): Promise<{user: User; idToken: string} | null> => {
     if (!auth) {
@@ -46,9 +44,6 @@ export const signIn = async (providerName: AuthProviderType): Promise<{user: Use
             break;
         case 'facebook':
             provider = facebookProvider;
-            break;
-        case 'apple':
-            provider = appleProvider;
             break;
         default:
             throw new Error('Unsupported provider');

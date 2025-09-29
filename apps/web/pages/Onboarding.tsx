@@ -60,7 +60,6 @@ const Onboarding: React.FC = () => {
           <div className="flex flex-col gap-3 max-w-sm mx-auto">
             <Button onClick={()=>do_login('google')}>以 Google 登入</Button>
             <Button variant="outline" onClick={()=>do_login('facebook')}>以 Facebook 登入</Button>
-            <Button variant="outline" onClick={()=>do_login('apple')}>以 Apple 登入</Button>
           </div>
         </div>
       )}
