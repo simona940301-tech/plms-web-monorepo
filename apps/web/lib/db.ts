@@ -3,9 +3,9 @@ import { getFirestore, addDoc, collection, serverTimestamp } from 'firebase/fire
 import { doc, setDoc } from 'firebase/firestore';
 
 const cfg = {
-  apiKey: (import.meta as any)?.env?.VITE_FIREBASE_API_KEY,
-  authDomain: (import.meta as any)?.env?.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: (import.meta as any)?.env?.VITE_FIREBASE_PROJECT_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
 };
 
 let db: ReturnType<typeof getFirestore> | null = null;

@@ -46,7 +46,7 @@ const Landing: React.FC = () => {
       {/* Hero */}
       <section className="text-center pt-6">
         <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
-          不是補習，是效率引擎。7 分鐘測出你的準備度。
+          最懂學測的台大團隊，為你量身打造最高效的衝刺計劃。
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground mb-6">
           考前 {daysToExam} 天，不再無效努力（自動倒數到考試日）。
